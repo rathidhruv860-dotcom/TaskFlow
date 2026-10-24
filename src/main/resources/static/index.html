@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f8fc">
+  <title>TaskFlow — Plan your work</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main id="authScreen" class="auth-screen">
+    <section class="auth-story">
+      <a class="brand brand-light" href="#"><span class="brand-mark">T</span> TaskFlow</a>
+      <div class="story-copy">
+        <span class="eyebrow">MAKE SPACE FOR YOUR BEST WORK</span>
+        <h1>Good work starts with a clear plan.</h1>
+        <p>Keep your tasks, deadlines, and team in sync. One calm place to move work forward.</p>
+        <div class="story-note"><span class="note-check">✓</span><span><strong>Small steps add up.</strong><br>Start with what matters today.</span></div>
+      </div>
+      <div class="story-footer">A simple task space for focused teams.</div>
+    </section>
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-mobile-brand"><span class="brand-mark">T</span> TaskFlow</div>
+        <div class="auth-heading">
+          <span class="eyebrow" id="authEyebrow">WELCOME BACK</span>
+          <h2 id="authTitle">Sign in to your workspace</h2>
+          <p id="authSubtitle">Pick up where you left off.</p>
+        </div>
+        <form id="authForm" class="form-stack">
+          <label id="nameField" class="field hidden">Your name<input id="authName" name="name" autocomplete="name" maxlength="80" placeholder="e.g. Dhruv Rathi"></label>
+          <label class="field">Email address<input id="authEmail" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+          <label class="field">Password<input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"></label>
+          <button id="authSubmit" class="button button-primary button-full" type="submit">Sign in <span>→</span></button>
+        </form>
+        <p class="auth-switch"><span id="authSwitchText">New to TaskFlow?</span> <button id="authSwitch" class="text-button" type="button">Create an account</button></p>
+        <p id="authError" class="form-error" role="alert"></p>
+        <p class="auth-footnote">Your work is saved to your TaskFlow account.</p>
+      </div>
+    </section>
+  </main>
+
+  <main id="appScreen" class="app-shell hidden">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark">T</span> TaskFlow</a>
+      <div class="workspace-label">WORKSPACE</div>
+      <button class="side-link active"><span class="side-icon">▦</span> My tasks <span id="navTaskCount" class="side-count">0</span></button>
+      <div class="sidebar-bottom">
+        <div class="help-card"><div class="help-icon">✦</div><strong>Keep your day moving</strong><p>Clear priorities make room for focused work.</p></div>
+        <div class="profile-row"><div id="avatar" class="avatar">D</div><div class="profile-copy"><strong id="profileName">User</strong><span id="profileEmail">user@example.com</span></div><button id="logoutButton" class="icon-button logout-button" title="Sign out" aria-label="Sign out">↗</button></div>
+      </div>
+    </aside>
+
+    <section class="main-area">
+      <header class="topbar"><div class="breadcrumbs">Workspace <span>/</span> <strong>My tasks</strong></div><div class="topbar-right"><span class="online-dot"></span><span>All changes saved</span></div></header>
+      <div class="page-content">
+        <section class="page-heading"><div><span class="eyebrow">YOUR WORKSPACE</span><h1>My tasks<span class="heading-period">.</span></h1><p>Keep track of what needs your attention.</p></div><button id="newTaskButton" class="button button-primary"><span class="plus">＋</span> New task</button></section>
+
+        <section class="stat-grid" aria-label="Task summary">
+          <article class="stat-card"><div class="stat-label"><span class="stat-icon icon-all">▦</span> All tasks</div><strong id="statAll" class="stat-value">0</strong><span class="stat-caption">in your workspace</span></article>
+          <article class="stat-card"><div class="stat-label"><span class="stat-icon icon-todo">◷</span> To do</div><strong id="statTodo" class="stat-value">0</strong><span class="stat-caption">ready to get started</span></article>
+          <article class="stat-card"><div class="stat-label"><span class="stat-icon icon-progress">↗</span> In progress</div><strong id="statProgress" class="stat-value">0</strong><span class="stat-caption">currently underway</span></article>
+          <article class="stat-card"><div class="stat-label"><span class="stat-icon icon-done">✓</span> Completed</div><strong id="statDone" class="stat-value">0</strong><span class="stat-caption">nice work</span></article>
+        </section>
+
+        <section class="task-section">
+          <div class="section-heading"><div><h2>Task list</h2><p>Tasks you created and tasks assigned to you</p></div><span id="visibleCount" class="result-count">0 tasks</span></div>
+          <div class="filter-bar">
+            <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search tasks..."></label>
+            <select id="statusFilter" aria-label="Filter by status"><option value="">All statuses</option><option value="TODO">To do</option><option value="IN_PROGRESS">In progress</option><option value="DONE">Done</option></select>
+            <select id="priorityFilter" aria-label="Filter by priority"><option value="">All priorities</option><option value="HIGH">High priority</option><option value="MEDIUM">Medium priority</option><option value="LOW">Low priority</option></select>
+            <label class="date-filter"><span>From</span><input id="dueAfterFilter" type="date" aria-label="Due after"></label>
+            <label class="date-filter"><span>To</span><input id="dueBeforeFilter" type="date" aria-label="Due before"></label>
+            <button id="clearFilters" class="text-button clear-filter">Clear</button>
+          </div>
+          <div id="loadingState" class="loading-state"><span class="spinner"></span> Loading your tasks…</div>
+          <div id="taskList" class="task-list"></div>
+          <div id="emptyState" class="empty-state hidden"><div class="empty-illustration">✓</div><h3 id="emptyTitle">Your task list is clear</h3><p id="emptyMessage">Add a task to get your plans moving.</p><button id="emptyCreateButton" class="button button-primary">Create your first task</button></div>
+          <div id="pageError" class="page-error hidden" role="alert"></div>
+        </section>
+        <footer class="page-footer">TaskFlow <span>·</span> Make progress, one task at a time.</footer>
+      </div>
+    </section>
+  </main>
+
+  <div id="taskModal" class="modal-backdrop hidden" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-heading"><div><span class="eyebrow">TASK DETAILS</span><h2 id="modalTitle">Create a task</h2></div><button id="closeModal" class="icon-button close-button" aria-label="Close dialog">×</button></div>
+      <form id="taskForm" class="form-stack">
+        <label class="field">Task title<input id="taskTitle" required maxlength="120" placeholder="What needs to get done?"></label>
+        <label class="field">Description <span class="optional">Optional</span><textarea id="taskDescription" maxlength="2000" rows="3" placeholder="Add a few details..."></textarea></label>
+        <div class="form-row"><label class="field">Status<select id="taskStatus"><option value="TODO">To do</option><option value="IN_PROGRESS">In progress</option><option value="DONE">Done</option></select></label><label class="field">Priority<select id="taskPriority"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option></select></label></div>
+        <div class="form-row"><label class="field">Due date<input id="taskDueDate" type="date"></label><label class="field">Assign to<select id="taskAssignee"><option value="">Unassigned</option></select></label></div>
+        <p id="modalError" class="form-error" role="alert"></p>
+        <div class="modal-actions"><button id="cancelModal" class="button button-quiet" type="button">Cancel</button><button id="saveTaskButton" class="button button-primary" type="submit">Create task</button></div>
+      </form>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

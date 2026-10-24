@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: taskflow
+      MYSQL_USER: taskflow
+      MYSQL_PASSWORD: taskflow_dev
+      MYSQL_ROOT_PASSWORD: root_dev
+    ports: ["3306:3306"]
+    volumes: ["taskflow-data:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  api:
+    build: .
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/taskflow?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: taskflow
+      DB_PASSWORD: taskflow_dev
+      JWT_SECRET: Zm9yLWxvY2FsLWRldmVsb3BtZW50LW9ubHktc2VjcmV0LWtleS0zMi1ieXRlcw==
+    ports: ["8080:8080"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+volumes:
+  taskflow-data:

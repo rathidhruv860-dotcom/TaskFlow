@@ -1,0 +1,286 @@
+{
+  "info": {
+    "name": "TaskFlow API",
+    "description": "TaskFlow local API tests. Register or log in first; the token is stored automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "taskId",
+      "value": "1"
+    },
+    {
+      "key": "assigneeId",
+      "value": "2"
+    }
+  ],
+  "item": [
+    {
+      "name": "TaskFlow API",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Demo User\",\n  \"email\": \"demo@example.com\",\n  \"password\": \"CollegeDemo123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) { pm.collectionVariables.set('token', pm.response.json().token); }"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Login",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"demo@example.com\",\n  \"password\": \"CollegeDemo123\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) { pm.collectionVariables.set('token', pm.response.json().token); }"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "List users (choose assigneeId)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/users"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tasks",
+          "item": [
+            {
+              "name": "Create task",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Prepare project demo\",\n  \"description\": \"Verify the API\",\n  \"status\": \"TODO\",\n  \"priority\": \"HIGH\",\n  \"dueDate\": \"2026-12-15\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) { pm.collectionVariables.set('taskId', pm.response.json().id); }"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "List tasks",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks"
+              }
+            },
+            {
+              "name": "Filter by status and priority",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks?status=TODO&priority=HIGH"
+              }
+            },
+            {
+              "name": "Filter by deadline",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks?dueAfter=2026-12-01&dueBefore=2026-12-31"
+              }
+            },
+            {
+              "name": "Get task",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks/{{taskId}}"
+              }
+            },
+            {
+              "name": "Update task",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Project demo completed\",\n  \"description\": \"API walkthrough is ready\",\n  \"status\": \"DONE\",\n  \"priority\": \"MEDIUM\",\n  \"dueDate\": \"2026-12-15\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Assign task (set assigneeId variable)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks/{{taskId}}/assignee",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"assigneeId\": {{assigneeId}}\n}"
+                }
+              }
+            },
+            {
+              "name": "Update task status",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks/{{taskId}}/status",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Unassign task",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks/{{taskId}}/assignee"
+              }
+            },
+            {
+              "name": "Delete task",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": "{{baseUrl}}/api/tasks/{{taskId}}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
